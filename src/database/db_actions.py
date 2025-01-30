@@ -1,8 +1,9 @@
 from typing import List
+
 from uuid import uuid4
 
-from src.database.models import db, Product, Review
-
+from src.database.models import Product, Review
+from src.database.base import db
 
 def get_products() -> List[Product]:
     return db.session.query(Product).all()
@@ -51,7 +52,7 @@ def add_review_byproduct(prod_id: str, text: str, grade: str):
     db.session.commit()
   
     
-def add_review(text: str, grade: int) -> str:
+def add_review(text: str, grade: str) -> str:
     review = Review(
         id=uuid4().hex,
         text=text,
@@ -76,8 +77,8 @@ def del_review(rev_id: str):
     db.session.commit()
     
     
-def update_review(rev_id: str, text: str, grade: int):
+def update_review(rev_id: str, text: str, grade: str):
     review = db.one_or_404(db.session.query(Review).where(Review.id == rev_id))
     review.text = text
     review.grade =  grade
-    db.session.commit()
+    db.session.commit() 

@@ -1,19 +1,13 @@
 from typing import List
+from dataclasses import dataclass
 
-from sqlalchemy import String, ForeignKey, Table, Column
-from sqlalchemy.orm import Mapped, mapped_column, relationship, declarative_base
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-Base = declarative_base()
-db = SQLAlchemy(model_class=Base, engine_options=dict(echo=True))
+from src.database.base import Base
+from src.database.associative_tables import prod_reviw_tabl_assoc
 
-produ_reviw_tabl_assoc = Table(
-    "produ_tabl_assoc",
-    Base.metadata,
-    Column("produ_id", ForeignKey("products.id"), primary_key=True),
-    Column("reviw_id", ForeignKey("reviews.id"), primary_key=True)
-)
-
+@dataclass
 class Review(Base):
     __tablename__ = "reviews"
     
@@ -21,7 +15,8 @@ class Review(Base):
     text: Mapped[str] = mapped_column(String())
     grade: Mapped[str] = mapped_column(String())
     
-    
+ 
+@dataclass   
 class Product(Base):
     __tablename__ = "products"
     
@@ -30,4 +25,4 @@ class Product(Base):
     description: Mapped[str] = mapped_column(String())
     img_url: Mapped[str] = mapped_column(String())
     price: Mapped[float] = mapped_column()
-    reviews: Mapped[List[Review]] = relationship(secondary=produ_reviw_tabl_assoc)
+    reviews: Mapped[List[Review]] = relationship(secondary=prod_reviw_tabl_assoc)
