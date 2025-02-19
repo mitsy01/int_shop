@@ -2,7 +2,7 @@ from typing import List
 
 from uuid import uuid4
 
-from src.database.models import Product, Review
+from src.database.models import Product, Review, User
 from src.database.base import db
 
 def get_products() -> List[Product]:
@@ -82,3 +82,24 @@ def update_review(rev_id: str, text: str, grade: str):
     review.text = text
     review.grade =  grade
     db.session.commit() 
+    
+    
+def add_user(email: str, password: str, first_name: str| None=None, last_name: str|None=None):
+    user = User(
+        id=uuid4().hex,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        password=password
+    )
+    db.session.add(user)
+    db.session.commit()
+    
+
+def get_tokens(email: str, password: str) -> dict:
+    user = db.one_or_404(db.session.query(User).where(User.email==email))
+    return user.create_tokens(password)
+
+
+def get_user(user_id: str):
+    return db.one_or_404(db.session.query(User).where(User.id==user_id))
